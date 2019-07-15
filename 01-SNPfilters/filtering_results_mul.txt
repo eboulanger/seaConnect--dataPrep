@@ -14,5 +14,5 @@ step 8	paired status		17546		DP3g95maf05.fil4.vcf
 step 9	remove sites quality score < 1/4 depth				DP3g95maf05.fil5.vcf
 step 10	depth x quality score cutoff				
 step 11	HWE 0.000001				
-step 12	He				
-step 13	Fis				
+step 12	He & Fis		5063	191	DP3g95maf05.FIL.hwe.Hfis.recode.vcf
+step 13	rename				mullus_all_filtered.vcf

@@ -86,7 +86,7 @@ awk '!/#/' DP3g95maf05.fil4.vcf | wc -l
 vcffilter -f "QUAL / DP > 0.25" DP3g95maf05.fil4.vcf > DP3g95maf05.fil5.vcf
 awk '!/#/' DP3g95maf05.fil5.vcf | wc -l
 
-# filter 10 : consists of multiple steps 
+# step 10 : consists of multiple steps 
 ## 1 : create list of depth of each locus
 cut -f8 DP3g95maf05.fil5.vcf | grep -oe "DP=[0-9]*" | sed 's/DP=//g' > DP3g95maf05.fil5.DEPTH
 ## 2 : create list of quality scores
@@ -118,31 +118,23 @@ set xtics 5
 plot 'meandepthpersite' using (bin($1,binwidth)):(1.0) smooth freq with boxes
 pause -1
 EOF
-                                                                                                
 ## 8 : combine all to get new vcf
 vcftools --vcf  DP3g95maf05.fil5.vcf --recode-INFO-all --out DP3g95maf05.FIL --max-meanDP 102.5 --exclude-positions DP3g95maf05.fil5.lowQDloci --recode 
-# > After filtering, kept 297 out of 297 Individuals
-# > Outputting VCF file...
-# > After filtering, kept 5722 out of a possible 8871 Sites
-# > Run Time = 6.00 seconds
 
-# step 10 : HWE
+# step 11 : HWE
 #           recommends by pop but since I have mostly one large pop: apply to all
 
 vcftools --vcf DP3g95maf05.FIL.recode.vcf --hwe 0.000001 --recode --recode-INFO-all --out DP3g95maf05.FIL.hwe
 
-# step 11 : He
+# step 12 : remove SNPs for which Ho > 0.6 and Fis < -0.5 or Fis > 0.5
+# find to-remove (/ to-keep) SNP positions in R using package Hierfstat
 
-TO DO
+Rscript --vanilla ../filterstep_Ho6_Fis5.R DP3g95maf05.FIL.hwe.recode.vcf positions_HoFis_dip.txt
+vcftools --vcf DP3g95maf05.FIL.hwe.recode.vcf --positions positions_HoFis_dip.txt --recode --recode-INFO-all --out DP3g95maf05.FIL.hwe.HFis
 
-# step 12 : Fis
+# step 13 : rename final filtered dataset
 
-TO DO
+cp DP3g95maf05.FIL.hwe.recode.vcf mullus_all_filtered.vcf
 
-# step 3 : outliers
-
-TO DO
-
-
-
+# step 14 : outliers
 

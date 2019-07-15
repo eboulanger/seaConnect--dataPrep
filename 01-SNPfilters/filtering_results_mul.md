@@ -1,5 +1,5 @@
-SNP filtering results for Mullus surmuletus					
-ddocent pipeline + additions					
+# SNP filtering results for Mullus surmuletus					
+### ddocent pipeline + additions					
 				
 | filtering step | filter for                                        | individuals retained | SNPs retained | run time (sec) | output |
 | -------------- | ------------------------------------------------- | :------------------: | :-----------: | :------------: | ------ |

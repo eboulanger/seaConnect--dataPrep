@@ -1,4 +1,9 @@
+
 00-rawData
+
+01-SNPfilters/01-Diplodus/
+01-SNPfilters/02-Mullus/
+
 02-outlierDetection
 03-finalPrep
 

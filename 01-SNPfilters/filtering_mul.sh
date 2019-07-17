@@ -6,7 +6,6 @@ cd ~/Documents/project_SEACONNECT/seaConnect--dataPrep/01-SNPfilters/
 mkdir 02-Mullus
 cd 02-Mullus
 
-
 FILE=../../00-rawData/02-Mullus/mullus.vcf
 PATH=$PATH:~/programmes/vcflib/bin/
 
@@ -53,7 +52,7 @@ vcftools --vcf mullus.g5mac3dp3.recode.vcf --remove lowDP.indv --recode --recode
 
 # step 4 : restrict data to variants called in a high percentage of individuals and filter by mean depth of genotypes
 
-vcftools --vcf mullus.g5mac3dplm.recode.vcf --max-missing 0.95 --maf 0.05 --recode --recode-INFO-all --out DP3g95maf05 --min-meanDP 10
+vcftools --vcf mullus.g5mac3dplm.recode.vcf --max-missing 0.95 --maf 0.05 --recode --recode-INFO-all --out DP3g95maf05 --min-meanDP 5
 
 ###
 # FreeBayes - specific filters
@@ -71,15 +70,15 @@ awk '!/#/' DP3g95maf05.recode.vcf | wc -l
 awk '!/#/' DP3g95maf05.fil1.vcf | wc -l
 
 # step 6 : filter out sites that have reads from both strands
-vcffilter -f "SAF / SAR > 100 & SRF / SRR > 100 | SAR / SAF > 100 & SRR / SRF > 100" -s DP3g95maf05.fil1.vcf > DP3g95maf05.fil2.vcf
-awk '!/#/' DP3g95maf05.fil2.vcf | wc -l
-# SKIPPED STEP 6 FOR NOW
+# vcffilter -f "SAF / SAR > 100 & SRF / SRR > 100 | SAR / SAF > 100 & SRR / SRF > 100" -s DP3g95maf05.fil1.vcf > DP3g95maf05.fil2.vcf
+# awk '!/#/' DP3g95maf05.fil2.vcf | wc -l
+# ONLY RETAINS 6 SNPS FOR MULLUS. SKIP THIS STEP FOR BOTH SPECIES.
 
 # step 7 : look at ration of mapping qualities between reference and alternate alleles 
 vcffilter -f "MQM / MQMR > 0.9 & MQM / MQMR < 1.05" DP3g95maf05.fil1.vcf > DP3g95maf05.fil3.vcf
 awk '!/#/' DP3g95maf05.fil3.vcf | wc -l
 
-# step 8 : check whether there is discrepancy in the properly paired status (SNAP IK NIET MAAR MAAKT BLIJKBAAR NIET UIT WANT GEEN SNPs WEGGEFILTERD)
+# step 8 : check whether there is discrepancy in the properly paired status
 vcffilter -f "PAIRED > 0.05 & PAIREDR > 0.05 & PAIREDR / PAIRED < 1.75 & PAIREDR / PAIRED > 0.25 | PAIRED < 0.05 & PAIREDR < 0.05" -s DP3g95maf05.fil3.vcf > DP3g95maf05.fil4.vcf
 awk '!/#/' DP3g95maf05.fil4.vcf | wc -l
 

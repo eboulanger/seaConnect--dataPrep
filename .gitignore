@@ -2,11 +2,16 @@
 *.txt
 *.pdf
 *.jpeg
+*.tsv
+*.sel
+*.rad
 
 00-rawData
 
 01-SNPfilters/01-Diplodus/
 01-SNPfilters/02-Mullus/
+01-SNPfilters/filtering_dip.sh
+01-SNPfilters/filtering_mul.sh
 
 02-outlierDetection
 03-finalPrep

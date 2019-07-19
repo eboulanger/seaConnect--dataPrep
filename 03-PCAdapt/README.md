@@ -9,7 +9,7 @@ set arguments : argument 1 = input file (vcf), argument 2 = species code
 
 #### for mullus :
 ```
-Rscript --vanilla PCAdapt.R ../01-SNPfilters/02-Mullus/mullus_all_filtered.vcf mul
+Rscript --vanilla PCAdapt.R ../01-SNPfilters/02-Mullus/mul_all_filtered.vcf mul
 ```
 see how many outliers were detected :
 ```
@@ -19,8 +19,8 @@ wc -l outl_pos_pcadpt_mul.txt
 
 #### for diplodus :
 ```
-Rscript --vanilla PCAdapt.R ../01-SNPfilters/01-Diplodus/diplodus_all_filtered.vcf dip
+Rscript --vanilla PCAdapt.R ../01-SNPfilters/01-Diplodus/dip_all_filtered.vcf dip
 
 wc -l outl_pos_pcadpt_dip.txt
 ```
-289 outliers detected for diplodus
+312 outliers detected for diplodus

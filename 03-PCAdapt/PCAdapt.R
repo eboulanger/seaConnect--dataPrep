@@ -3,13 +3,17 @@
 
 #!/usr/bin/env Rscript
 args = commandArgs(trailingOnly=TRUE)
+#args <- c("../01-SNPfilters/01-Diplodus/dip_all_filtered.vcf", "dip")
 
 # load libraries
 library(pcadapt)
 library(vcfR)
 
-# import vcf file to pcadapt format
+# define arguments
 path_to_file <- args[1]
+speciesCode <- args[2]
+
+# import vcf file to pcadapt format
 dat <- read.pcadapt(path_to_file, type = "vcf")
 
 # choose number K of principal components
@@ -48,8 +52,8 @@ print(paste(length(outliers), "outliers detected"),quote=0)
 vcf <- read.vcfR(path_to_file, verbose=F)
 loci <- as.data.frame(vcf@fix[,1:2])
 outlier_loci <- loci[outliers,]
-outlier_positions <- outlier_loci$POS
+outlier_positions <- droplevels(outlier_loci$POS)
 
 # output positions table
-write.table(outlier_positions, file = paste0("outl_pos_pcadpt_",args[2],".txt"), sep = "\t", quote = F, row.names = F, col.names = F)
-print(paste0("outlier positions table exported to outl_pos_pcadpt_", args[2]), quote = 0)
+write.table(outlier_positions, file = paste0("outl_pos_pcadpt_",speciesCode,".txt"), sep = "\t", quote = F, row.names = F, col.names = F)
+print(paste0("outlier positions table exported to outl_pos_pcadpt_",speciesCode), quote = 0)

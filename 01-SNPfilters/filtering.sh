@@ -1,6 +1,8 @@
 #### Filtering steps by dDocent
 #           tutorial: https://www.ddocent.com/filtering/
 
+# define arguments
+
 FILE=$1
 FOLDER=$2
 SPCODE=$3

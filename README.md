@@ -5,7 +5,7 @@ Scripts to prepare RADSeq data for analysis.
 - outlier detection
 - file conversions, subsetting and renaming 
 
-## 01-SNPfiltering
+## 01-SNPfiltering 
 
 script adapted from [ddocent tutorial](https://www.ddocent.com/filtering/) and additions
 
@@ -16,10 +16,10 @@ cd ~/Documents/project_SEACONNECT/seaConnect--dataPrep/01-SNPfilters/
 mkdir 01-Diplodus
 mkdir 02-Mullus
 ```
-set the species-specific arguments for the script to run on
-$1 = input file (specify path if not in current directory)
-$2 = output folder
-$3 = species code
+set the species-specific arguments for the script to run on  
+  $1 = input file (specify path if not in current directory)  
+  $2 = output folder  
+  $3 = species code  
 ```
 bash filtering.sh ../00-rawData/01-Diplodus/sar_ddocent.vcf 01-Diplodus dip
 bash filtering.sh ../00-rawData/02-Mullus/mullus.vcf 02-Mullus mul
@@ -70,11 +70,11 @@ Detect Fst outliers by bayesian inference with the [BayeScan software](http://cm
 
 This script will load your vcf file, determine the population identifier for each 
 individual, and return a bayescan .txt inputfile
-set arguments : 
-$1 = input file (vcf)
-$2 = species code
-the script is currently set to detect and assign two populations (K). Run the script 
-interactively if you want to determine and assign other values of K
+set arguments :    
+  $1 = input file (vcf)  
+  $2 = species code  
+The script is currently set to detect and assign two populations (K). Run the script 
+interactively if you want to determine and assign other values of K.
 
 #### for mullus :
 ```
@@ -115,9 +115,9 @@ R and retrieve loci positions from vcf file
 This script will load your vcf file, detect outlier loci using the package pcadapt and
 output a list of outlier loci positions that can be used to subset your vcf file
 
-set arguments : 
-$1 = input file (vcf)
-$2 = species code
+set arguments :  
+$1 = input file (vcf)  
+$2 = species code  
 
 #### for mullus :
 ```
@@ -139,9 +139,36 @@ wc -l outl_pos_pcadpt_dip.txt
 
 ## 04-finalPrep
 
-combine outlier detection results from Bayescan and PCAdapt and subset your original vcf 
-file to get a neutral SNP dataset and an adaptive SNP dataset
+Final steps to get neutral and adaptive SNP sets and correct file formats for both species.
 
-### adaptive loci
+This script subsets the filtered vcf file from 01-SNPfilters by outlier positions detected 
+in 02-BayeScan and 03-PCAdapt.  
+It also subsets the same vcf file for the remaining neutral positions and applies a final 
+filter for HWE.
 
-### neutral loci
+Finally, the script converts the final adaptive and neutral .vcf files in .tped, .tfam, 
+.bed and .raw format necessary for downstream analyses.
+
+set arguments:  
+  $1 = input file (vcf)  
+  $2 = species code  
+  
+#### for diplodus
+```
+bash outlier_positions.sh ../01-SNPfilters/01-Diplodus/dip_all_filtered.vcf dip
+```
+#### for Mullus
+```
+bash outlier_positions.sh ../01-SNPfilters/02-Mullus/mul_all_filtered.vcf mul
+```
+In total, 2680 adaptive loci were detected, with 10 loci detected by both the BayeScan and PCAdapt method.
+After HWE filter, 12432 neutral loci were retained.
+
+#### clean up files to separate directories
+```
+mkdir 01-Diplodus
+mv dip_* 01-Diplodus/
+
+mkdir 02-Mullus
+mv mul_* 02-Mullus
+```

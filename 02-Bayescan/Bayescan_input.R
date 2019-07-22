@@ -3,8 +3,8 @@
 
 #!/usr/bin/env Rscript
 args = commandArgs(trailingOnly=TRUE)
-#args <- c("../01-SNPfilters/01-Diplodus/diplodus_all_filtered.vcf","dip")
-#args <- c("../01-SNPfilters/02-Mullus/mullus_all_filtered.vcf","mul")
+#args <- c("../01-SNPfilters/01-Diplodus/dip_all_filtered.vcf","dip")
+#args <- c("../01-SNPfilters/02-Mullus/mul_all_filtered.vcf","mul")
 
 start <- Sys.time()
 
@@ -16,7 +16,7 @@ library(radiator)
 # define arguments
 inputVcf <- args[1]
 speciesCode <- args[2]
-outputBayeScan <- paste0(speciesCode,"_bayesc_input_2pop")
+outputBayeScan <- paste0(speciesCode,"_bayesc_input_3pop")
   
 # import vcf file to genind
 vcfFile <- read.vcfR(inputVcf, verbose = F)
@@ -26,6 +26,8 @@ genind <- vcfR2genind(vcfFile)
 
 # use DAPC groups as pop
 grp <- find.clusters(genind, max.n.clust = 40)
+400
+2
 grp$size 
 pop(genind) <- grp$grp
 

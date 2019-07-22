@@ -4,6 +4,7 @@
 #!/usr/bin/env Rscript
 args = commandArgs(trailingOnly=TRUE)
 #args <- c("../01-SNPfilters/01-Diplodus/dip_all_filtered.vcf", "dip")
+#args <- c("../01-SNPfilters/02-Mullus/mul_all_filtered.vcf", "mul")
 
 # load libraries
 library(pcadapt)
@@ -52,8 +53,7 @@ print(paste(length(outliers), "outliers detected"),quote=0)
 vcf <- read.vcfR(path_to_file, verbose=F)
 loci <- as.data.frame(vcf@fix[,1:2])
 outlier_loci <- loci[outliers,]
-outlier_positions <- droplevels(outlier_loci$POS)
 
 # output positions table
-write.table(outlier_positions, file = paste0("outl_pos_pcadpt_",speciesCode,".txt"), sep = "\t", quote = F, row.names = F, col.names = F)
+write.table(outlier_loci, file = paste0("outl_pos_pcadpt_",speciesCode,".txt"), sep = "\t", quote = F, row.names = F, col.names = F)
 print(paste0("outlier positions table exported to outl_pos_pcadpt_",speciesCode), quote = 0)

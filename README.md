@@ -5,6 +5,15 @@ Scripts to prepare RADSeq data for analysis.
 - outlier detection
 - file conversions, subsetting and renaming 
 
+## Dependencies
+You will need to install the following software:  
+- [VCFtools](https://vcftools.github.io)
+- [BCFtools](https://samtools.github.io/bcftools/)
+- [PLINK](http://zzz.bwh.harvard.edu/plink/)  
+
+You will need to have the following R packages:  
+
+
 ## 01-SNPfiltering 
 
 script adapted from [ddocent tutorial](https://www.ddocent.com/filtering/) and additions
@@ -41,7 +50,8 @@ bash filtering.sh ../00-rawData/02-Mullus/mullus.vcf 02-Mullus mul
 | step 9         | remove sites quality score < 1/4 depth            |                      | 17546         |                | DP3g95maf05.fil5.vcf
 | step 10        | depth x quality score cutoff	                     | 424                  | 15466         |	             | 
 | step 11        | He > 0.6 & Fis > 0.5 & Fix < -0.5                 | 424                  | 15232         | 25 min         | DP3g95maf05.FIL.HFis.recode.vcf
-| step 12        | rename                                            |                      |               |                | mul_all_filtered.vcf
+| step 12        | remove extreme outliers individual O HET          | 413                  | 15232         | 23.00          | DP3g95maf05.FIL.HFis.indHet.recode.vcf
+| step 13        | rename                                            |                      |               |                | mul_all_filtered.vcf
 
 ### SNP filtering results for Diplodus sargus								
 				
@@ -59,8 +69,12 @@ bash filtering.sh ../00-rawData/02-Mullus/mullus.vcf 02-Mullus mul
 | step 9         | remove sites quality score < 1/4 depth            | 297                  | 9688          |                | DP3g95maf05.fil5.vcf
 | step 10        | depth x quality score cutoff	                     | 297                  | 8325          | 11.00          | 
 | step 11        | He > 0.6 & Fis > 0.5 & Fix < -0.5                 | 297                  | 8206          | 27 min         | DP3g95maf05.FIL.HFis.recode.vcf
-| step 12        | rename                                            |                      |               |                | dip_all_filtered.vcf 
+| step 12        | remove extreme outliers individual O HET          | **to do**            |               |                | DP3g95maf05.FIL.HFis.indHet.recode.vcf
+| step 13        | rename                                            |                      |               |                | dip_all_filtered.vcf 
 
+### manually rename individuals for conventional naming system
+
+**to do**
 
 ## 02-Bayescan
 
@@ -101,9 +115,8 @@ bash run_bayescan.sh
 ```
 ### step 3: verify convergence and extract outliers
 Run interactive R script called `Bayescan_evaluation.R`
-   run 1 seems to get "best" results for diplodus. Neither runs detects outliers for mullus.
 
-The script also extracts outlier lists and export loci positions for later subsetting
+The script also extracts outlier lists for the different runs and export loci positions for later subsetting (with run index)
 
 ## 03-PCAdapt
 
@@ -147,19 +160,20 @@ It also subsets the same vcf file for the remaining neutral positions and applie
 filter for HWE.
 
 Finally, the script converts the final adaptive and neutral .vcf files in .tped, .tfam, 
-.bed and .raw format necessary for downstream analyses.
+.bed and .raw format necessary for downstream analyses.r
 
 set arguments:  
   $1 = input file (vcf)  
   $2 = species code  
+  $3 = bayescan run index
   
 #### for diplodus
 ```
-bash outlier_positions.sh ../01-SNPfilters/01-Diplodus/dip_all_filtered.vcf dip
+bash outlier_positions.sh ../01-SNPfilters/01-Diplodus/dip_all_filtered.vcf dip run1
 ```
 #### for Mullus
 ```
-bash outlier_positions.sh ../01-SNPfilters/02-Mullus/mul_all_filtered.vcf mul
+bash outlier_positions.sh ../01-SNPfilters/02-Mullus/mul_all_filtered.vcf mul run1
 ```
 In total, 2680 adaptive loci were detected, with 10 loci detected by both the BayeScan and PCAdapt method.
 After HWE filter, 12432 neutral loci were retained.

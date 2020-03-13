@@ -4,12 +4,13 @@
 
 inputFile=$1
 spCode=$2
+runNum=$3
 
 #### adaptive SNPs ####
 
 ## step 1: create a final list of all outlier loci positions
 
-cat ../02-Bayescan/outl_pos_bayesc_"$spCode".txt ../03-PCAdapt/outl_pos_pcadpt_"$spCode".txt > "$spCode"_outl_pos_combi.txt
+cat ../02-Bayescan/outl_pos_bayesc_"$spCode"_"$runNum".txt ../03-PCAdapt/outl_pos_pcadpt_"$spCode".txt > "$spCode"_outl_pos_combi.txt
 
 # how many are detected by both methods?
 nPosOutDup=`sort "$spCode"_outl_pos_combi.txt | uniq -d | wc -l` 
@@ -33,15 +34,17 @@ mv "$spCode"_adaptive_"$nPosOut".recode.vcf "$spCode"_adaptive_"$nPosOut".vcf
 
 ## step 3 : convert vcf files to necessary formats for downstream analyses
 
-# convert .vcf files to .bep files for ADMIXTURE
-# .vcf to .tped
-vcftools --vcf "$spCode"_adaptive_"$nPosOut".vcf --plink-tped --out "$spCode"_adaptive_"$nPosOut"
-# .tped to .bed
-plink --tped "$spCode"_adaptive_"$nPosOut".tped --tfam "$spCode"_adaptive_"$nPosOut".tfam --make-bed --out "$spCode"_adaptive_"$nPosOut" --noweb
+# convert .vcf files to PLINK 1 binary files
+# writes .bed .bim and .fam files (ADMIXTURE will need .bed file)
+plink --vcf "$spCode"_adaptive_"$nPosOut".vcf --out "$spCode"_adaptive_"$nPosOut" --allow-extra-chr --vcf-half-call missing
 
 # convert to minor allele frequencies for RDA and other analyses
-# .tped to .raw 
-plink --tped "$spCode"_adaptive_"$nPosOut".tped --tfam "$spCode"_adaptive_"$nPosOut".tfam --recodeA --out "$spCode"_adaptive_"$nPosOut" --noweb
+# writes .raw file
+plink --bfile "$spCode"_adaptive_"$nPosOut" --recodeA --out "$spCode"_adaptive_"$nPosOut" --allow-extra-chr
+
+# convert to STRUCTURE format for assignPop 
+# writes .strct_in file
+plink --bfile "$spCode"_adaptive_"$nPosOut" --recode structure --out "$spCode"_adaptive_"$nPosOut" --allow-extra-chr
 
 #### neutral SNPs ####
 
@@ -64,12 +67,36 @@ mv "$spCode"_neutral.log "$spCode"_neutral_"$nPosNtrl".log
 
 ## step 4 : convert vcf files to necessary formats for downstream analyses
 
-# convert .vcf files to .bep files for ADMIXTURE
-# .vcf to .tped
-vcftools --vcf "$spCode"_neutral_"$nPosNtrl".vcf --plink-tped --out "$spCode"_neutral_"$nPosNtrl"
-# .tped to .bed
-plink --tped "$spCode"_neutral_"$nPosNtrl".tped --tfam "$spCode"_neutral_"$nPosNtrl".tfam --make-bed --out "$spCode"_neutral_"$nPosNtrl" --noweb
+# convert .vcf files to PLINK 1 binary files
+# writes .bed .bim and .fam files (ADMIXTURE will need .bed file)
+plink --vcf "$spCode"_neutral_"$nPosNtrl".vcf --out "$spCode"_neutral_"$nPosNtrl" --allow-extra-chr --vcf-half-call missing
 
 # convert to minor allele frequencies for RDA and other analyses
-# .tped to .raw 
-plink --tped "$spCode"_neutral_"$nPosNtrl".tped --tfam "$spCode"_neutral_"$nPosNtrl".tfam --recodeA --out "$spCode"_neutral_"$nPosNtrl" --noweb
+# writes .raw file
+plink --bfile "$spCode"_neutral_"$nPosNtrl" --recodeA --out "$spCode"_neutral_"$nPosNtrl" --allow-extra-chr
+
+# convert to STRUCTURE format for assignPop 
+# writes .strct_in file
+plink --bfile "$spCode"_neutral_"$nPosNtrl" --recode structure --out "$spCode"_neutral_"$nPosNtrl"  --allow-extra-chr
+
+# convert to genepop format for use of GENODIVE (to calculate kinship)
+# use PGDSpider GUI
+# input: neutral.vcf and population map, output: neutral.gen.txt
+# outputted .gen.txt file: add information on first line (otherwise genodive won't recognise format)
+
+
+#### all SNPs ####
+
+## convert vcf files to necessary formats for downstream analyses
+
+# convert .vcf files to PLINK 1 binary files
+# writes .bed .bim and .fam files (ADMIXTURE will need .bed file)
+plink --vcf "$inputFile" --out "$spCode"_all_filtered --allow-extra-chr --vcf-half-call missing
+
+# convert to minor allele frequencies for RDA and other analyses
+# writes .raw file
+plink --bfile "$spCode"_all_filtered --recodeA --out "$spCode"_all_filtered --allow-extra-chr
+
+# convert to STRUCTURE format for assignPop 
+# writes .strct_in file
+plink --bfile "$spCode"_all_filtered --recode structure --out "$spCode"_all_filtered --allow-extra-chr

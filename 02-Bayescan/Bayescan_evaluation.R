@@ -8,11 +8,11 @@ library(coda)
 library(vcfR)
 
 # set arguments
-spCode <- "dip" # species
+spCode <- "mul" # species
 runNum <- 1 # run number
 inputName <- paste0(spCode,"_bayesc_2pop_run",runNum) # 2pop or 3pop analysis (only for mullus)
 #vcfPath <- "../01-SNPfilters/02-Mullus/mul_all_filtered.vcf"
-vcfPath <- "../01-SNPfilters/01-Diplodus/dip_all_filtered.vcf"
+#vcfPath <- "../01-SNPfilters/01-Diplodus/dip_all_filtered.vcf"
 
 ## model convergence ####
 chain1 <- read.table(paste0(inputName,"_ch1.sel"),header=TRUE)
@@ -53,11 +53,11 @@ gelman.plot(combined,ask)
 ## Bayescan results ####
 
 ## Functions defined in the script 'plot_R.r'in the BayeScan folder
-results<-plot_bayescan(paste0(inputName,"_ch1_fst.txt"),FDR=0.05)
+results<-plot_bayescan(paste0(inputName,"_ch2_fst.txt"),FDR=0.05)
 
 # detect outliers
 outliers_bayescan <-results$outliers # position of outliers
-results$nb_outliers #68 outliers for mullus, 126 for diplodus
+results$nb_outliers #283 outliers for mullus, 126 for diplodus
 
 # extract corresponding SNP names and positions
 vcf <- read.vcfR(vcfPath, verbose=F)
@@ -65,7 +65,7 @@ loci <- as.data.frame(vcf@fix[,1:2])
 outlier_loci <- loci[results$outliers,]
 
 # output positions table
-write.table(outlier_loci, file = paste0("outl_pos_bayesc_",spCode,".txt"), sep = "\t", quote = F, row.names = F, col.names = F)
-print(paste0("outlier positions table exported to outl_pos_bayesc_", spCode,".txt"), quote = 0)
+write.table(outlier_loci, file = paste0("outl_pos_bayesc_",spCode,"_run",runNum,".txt"), sep = "\t", quote = F, row.names = F, col.names = F)
+print(paste0("outlier positions table exported to outl_pos_bayesc_", spCode,"_run", runNum,".txt"), quote = 0)
 
 

@@ -67,7 +67,7 @@ awk '/#/' DP3g95maf05.recode.vcf
 # population level: vcffilter -s -f "AB > 0.25 & AB < 0.75 | AB < 0.01" DP3g95p5maf05.recode.vcf > DP3g95p5maf05.fil1.vcf
 vcffilter -s -f "AB > 0.25 & AB < 0.75 | AB < 0.01" DP3g95maf05.recode.vcf > DP3g95maf05.fil1.vcf
 # check how many were removed
-awk '!/#/' DP3g95maf05.recode.vcf | wc -l
+DP3g95maf05.recode.vcf | wc -l
 awk '!/#/' DP3g95maf05.fil1.vcf | wc -l
 
 # step 6 : filter out sites that have reads from both strands
@@ -129,7 +129,21 @@ vcftools --vcf  DP3g95maf05.fil5.vcf --recode-INFO-all --out DP3g95maf05.FIL --m
 Rscript --vanilla ../filterstep_Ho6_Fis5.R DP3g95maf05.FIL.recode.vcf positions_HoFis_$SPCODE.txt
 vcftools --vcf DP3g95maf05.FIL.recode.vcf --positions positions_HoFis_$SPCODE.txt --recode --recode-INFO-all --out DP3g95maf05.FIL.HFis
 
-# step 13 : rename final filtered dataset
+# step 12 : remove Individuals with extreme-outlier observed heterozygosity values
+# 1- calculate individual homozygosity with vcftools
+# 2- calculate individual heterozygosity in R
+# 3- inspect values and keep only individuals with non-extreme values
+#    extreme values are defined as those that fall outside of 9 times the interquartal range. (typical outliers are defined as 1.5IQR) this was set arbitrarily after visual inspection, and to allows the same criteria to be applied to both species
 
-cp DP3g95maf05.FIL.HFis.recode.vcf "$SPCODE"_all_filtered.vcf
+# calculate individual homozygosity
+vcftools --vcf DP3g95maf05.FIL.HFis.recode.vcf --het --out DP3g95maf05.FIL.HFis.indHo
+cp DP3g95maf05.FIL.HFis.indHo.het DP3g95maf05.FIL.HFis.indHo.csv
+# calculate individual heterozygosity, asses extreme outliers and find individuals to keep
+Rscript --vanilla ../filterstep_indHetO_9IQR.R DP3g95maf05.FIL.HFis.indHo.csv indv_HETo_9IQR.txt
+# remove individuals
+vcftools --vcf DP3g95maf05.FIL.HFis.recode.vcf --keep indv_HETo_9IQR.txt --recode --recode-INFO-all --out DP3g95maf05.FIL.HFis.indHet
+
+# step 13 : rename final filtered dataset
+cp DP3g95maf05.FIL.HFis.indHet.recode.vcf "$SPCODE"_all_filtered_origid.vcf
+
 

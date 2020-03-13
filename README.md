@@ -9,7 +9,7 @@ Scripts to prepare RADSeq data for analysis.
 You will need to install the following software:  
 - [VCFtools](https://vcftools.github.io)
 - [BCFtools](https://samtools.github.io/bcftools/)
-- [PLINK](http://zzz.bwh.harvard.edu/plink/)  
+- [PLINK v1.9](https://www.cog-genomics.org/plink/1.9/)
 
 You will need to have the following R packages:  
 
@@ -51,7 +51,7 @@ bash filtering.sh ../00-rawData/02-Mullus/mullus.vcf 02-Mullus mul
 | step 10        | depth x quality score cutoff	                     | 424                  | 15466         |	             | 
 | step 11        | He > 0.6 & Fis > 0.5 & Fix < -0.5                 | 424                  | 15232         | 25 min         | DP3g95maf05.FIL.HFis.recode.vcf
 | step 12        | remove extreme outliers individual O HET          | 413                  | 15232         | 23.00          | DP3g95maf05.FIL.HFis.indHet.recode.vcf
-| step 13        | rename                                            |                      |               |                | mul_all_filtered.vcf
+| step 13        | rename                                            |                      |               |                | mul_all_filtered_origid.vcf
 
 ### SNP filtering results for Diplodus sargus								
 				
@@ -69,12 +69,20 @@ bash filtering.sh ../00-rawData/02-Mullus/mullus.vcf 02-Mullus mul
 | step 9         | remove sites quality score < 1/4 depth            | 297                  | 9688          |                | DP3g95maf05.fil5.vcf
 | step 10        | depth x quality score cutoff	                     | 297                  | 8325          | 11.00          | 
 | step 11        | He > 0.6 & Fis > 0.5 & Fix < -0.5                 | 297                  | 8206          | 27 min         | DP3g95maf05.FIL.HFis.recode.vcf
-| step 12        | remove extreme outliers individual O HET          | **to do**            |               |                | DP3g95maf05.FIL.HFis.indHet.recode.vcf
-| step 13        | rename                                            |                      |               |                | dip_all_filtered.vcf 
+| step 12        | remove extreme outliers individual O HET          | 297                  |               |                | DP3g95maf05.FIL.HFis.indHet.recode.vcf
+| step 13        | rename                                            |                      |               |                | dip_all_filtered_origid.vcf 
 
-### manually rename individuals for conventional naming system
-
-**to do**
+### rename individuals for conventional naming system and create population map
+this is adapted for our case, review R script or skip according to naming needs
+```
+bash renaming.sh 01-Diplodus/ dip
+bash renaming.sh 02-Mullus/ mul
+```
+output:
+- dip_all_filtered.vcf
+- dip_popualtion_map_297ind.txt
+- mul_all_filtered.vcf
+- mul_population_map_413ind.txt
 
 ## 02-Bayescan
 
@@ -140,7 +148,7 @@ see how many outliers were detected :
 ```
 wc -l outl_pos_pcadpt_mul.txt
 ```
-2632 outliers detected for mullus
+1327 outliers detected for mullus
 
 #### for diplodus :
 ```
@@ -159,30 +167,46 @@ in 02-BayeScan and 03-PCAdapt.
 It also subsets the same vcf file for the remaining neutral positions and applies a final 
 filter for HWE.
 
-Finally, the script converts the final adaptive and neutral .vcf files in .tped, .tfam, 
-.bed and .raw format necessary for downstream analyses.r
+Finally, the script converts the final adaptive and neutral .vcf files in .bed .bim .fam .raw
+and .strct_in format necessary for downstream analyses.
 
-set arguments:  
+The conversion to genepop format for use of GENODIVE (to calculate kinship) is done with
+the PGDSpider GUI. 
+input: neutral.vcf and population map, output: neutral.gen.txt
+outputted .gen.txt file: add information on first line (otherwise genodive won't recognise format)
+
+To run the script, set arguments:  
   $1 = input file (vcf)  
   $2 = species code  
   $3 = bayescan run index
   
 #### for diplodus
 ```
-bash outlier_positions.sh ../01-SNPfilters/01-Diplodus/dip_all_filtered.vcf dip run1
+mkdir 01-Diplodus
+cp ../01-SNPfilters/01-Diplodus/dip_population_map_*.txt 01-Diplodus/
+cp ../01-SNPfilters/01-Diplodus/dip_all_filtered.vcf 01-Diplodus/
+
+bash outlier_positions.sh 01-Diplodus/dip_all_filtered.vcf dip run1
 ```
+
+In total, 494 outlier loci were detected, with 10 loci detected by both the BayeScan and PCAdapt method.
+After HWE filter, 7570 neutral loci were retained.
+
 #### for Mullus
 ```
-bash outlier_positions.sh ../01-SNPfilters/02-Mullus/mul_all_filtered.vcf mul run1
+mkdir 02-Mullus
+cp ../01-SNPfilters/02-Mullus/mul_population_map_*.txt 02-Mullus/
+cp ../01-SNPfilters/02-Mullus/mul_all_filtered.vcf 02-Mullus/
+
+bash outlier_positions.sh 02-Mullus/mul_all_filtered.vcf mul run1
 ```
 In total, 2680 adaptive loci were detected, with 10 loci detected by both the BayeScan and PCAdapt method.
 After HWE filter, 12432 neutral loci were retained.
 
+
 #### clean up files to separate directories
 ```
-mkdir 01-Diplodus
 mv dip_* 01-Diplodus/
-
-mkdir 02-Mullus
-mv mul_* 02-Mullus
+mv mul_* 02-Mullus/
 ```
+

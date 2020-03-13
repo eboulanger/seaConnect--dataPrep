@@ -2,6 +2,7 @@
 # vignette: https://cran.r-project.org/web/packages/pcadapt/vignettes/pcadapt.html
 
 #!/usr/bin/env Rscript
+#setwd("/Users/eboulanger-admin/Documents/project_SEACONNECT/seaConnect--dataPrep/03-PCAdapt")
 args = commandArgs(trailingOnly=TRUE)
 #args <- c("../01-SNPfilters/01-Diplodus/dip_all_filtered.vcf", "dip")
 #args <- c("../01-SNPfilters/02-Mullus/mul_all_filtered.vcf", "mul")

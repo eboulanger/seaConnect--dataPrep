@@ -10,8 +10,10 @@ You will need to install the following software:
 - [VCFtools](https://vcftools.github.io)
 - [BCFtools](https://samtools.github.io/bcftools/)
 - [PLINK v1.9](https://www.cog-genomics.org/plink/1.9/)
+- [PGDSpider](http://www.cmpg.unibe.ch/software/PGDSpider/)
 
 You will need to have the following R packages:  
+adegenet, polysat, pegas, vcfR, hierfstat, coda, radiator, pcadapt
 
 
 ## 01-SNPfiltering 
@@ -171,9 +173,9 @@ Finally, the script converts the final adaptive and neutral .vcf files in .bed .
 and .strct_in format necessary for downstream analyses.
 
 The conversion to genepop format for use of GENODIVE (to calculate kinship) is done with
-the PGDSpider GUI. 
-input: neutral.vcf and population map, output: neutral.gen.txt
-outputted .gen.txt file: add information on first line (otherwise genodive won't recognise format)
+the PGDSpider GUI.   
+input: neutral.vcf and population map, output: neutral.gen.txt  
+outputted .gen.txt file: add information on first line (otherwise genodive won't recognise format)  
 
 To run the script, set arguments:  
   $1 = input file (vcf)  

@@ -1,6 +1,6 @@
 # seaConnect--dataPrep
 
-Scripts to prepare RADSeq data for analysis. 
+Scripts to prepare GBS data for analysis. 
 - filtering steps for dDocent SNP output
 - outlier detection
 - file conversions, subsetting and renaming 
@@ -27,6 +27,11 @@ cd ~/Documents/project_SEACONNECT/seaConnect--dataPrep/01-SNPfilters/
 mkdir 01-Diplodus
 mkdir 02-Mullus
 ```
+start a log of the terminal output
+```
+script 01-Diplodus/filtering.log
+script 02-Mullus/filtering.log
+```
 set the species-specific arguments for the script to run on  
   $1 = input file (specify path if not in current directory)  
   $2 = output folder  
@@ -34,6 +39,10 @@ set the species-specific arguments for the script to run on
 ```
 bash filtering.sh ../00-rawData/01-Diplodus/sar_ddocent.vcf 01-Diplodus dip
 bash filtering.sh ../00-rawData/02-Mullus/mullus.vcf 02-Mullus mul
+```
+when all steps are finished: finish the terminal output log
+```
+exit
 ```
 
 ### SNP filtering results for Mullus surmuletus					

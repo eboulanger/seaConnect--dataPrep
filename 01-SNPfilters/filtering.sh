@@ -67,7 +67,7 @@ awk '/#/' DP3g95maf05.recode.vcf
 # population level: vcffilter -s -f "AB > 0.25 & AB < 0.75 | AB < 0.01" DP3g95p5maf05.recode.vcf > DP3g95p5maf05.fil1.vcf
 vcffilter -s -f "AB > 0.25 & AB < 0.75 | AB < 0.01" DP3g95maf05.recode.vcf > DP3g95maf05.fil1.vcf
 # check how many were removed
-DP3g95maf05.recode.vcf | wc -l
+awk '!/#/' DP3g95maf05.recode.vcf | wc -l
 awk '!/#/' DP3g95maf05.fil1.vcf | wc -l
 
 # step 6 : filter out sites that have reads from both strands

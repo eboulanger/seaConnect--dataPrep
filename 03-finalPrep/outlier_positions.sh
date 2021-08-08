@@ -4,28 +4,20 @@
 
 inputFile=$1
 spCode=$2
-runNum=$3
 
 #### adaptive SNPs ####
 
-## step 1: create a final list of all outlier loci positions
-
-cat ../02-Bayescan/outl_pos_bayesc_"$spCode"_"$runNum".txt ../03-PCAdapt/outl_pos_pcadpt_"$spCode".txt > "$spCode"_outl_pos_combi.txt
-
-# how many are detected by both methods?
-nPosOutDup=`sort "$spCode"_outl_pos_combi.txt | uniq -d | wc -l` 
-echo ""$nPosOutDup" outlier loci detected with both methods"
+# step 1: rename list of outlier positions
+cp ../03-PCAdapt/outl_pos_pcadpt_"$spCode".txt "$spCode"_outl_pos.txt
 # extract total number of unique outlier positions (for file naming)
-nPosOut=`sort "$spCode"_outl_pos_combi.txt | uniq -u | wc -l` 
+nPosOut=`sort "$spCode"_outl_pos.txt | uniq -u | wc -l` 
 echo ""$nPosOut" unique outlier loci in total"
 # remove leading whitespaces (from here: https://www.cyberciti.biz/faq/bash-remove-whitespace-from-string/)
 shopt -s extglob # turn it on
 nPosOut="${nPosOut##*( )}"
 shopt -u extglob # turn it off
-
-# extract file with unique positions
-sort "$spCode"_outl_pos_combi.txt | uniq -u > "$spCode"_outl_pos_"$nPosOut".txt
-#rm "$spCode"_outl_pos_combi.txt
+# add number of outliers to file name
+mv "$spCode"_outl_pos.txt "$spCode"_outl_pos_"$nPosOut".txt
 
 ## step 2: subset filtered vcf file by outlier positions
 

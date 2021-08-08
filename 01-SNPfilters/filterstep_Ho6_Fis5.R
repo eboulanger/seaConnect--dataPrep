@@ -28,9 +28,9 @@ hf <- genind2hierfstat(genind)
 stats <- basic.stats(hf)
 
 # Filter SNPs for Ho and Fis
-loc_H.6<- stats$perloc[which(stats$perloc$Ho<0.6),]
-loc_H.6_Fis.5 <- loc_H.6[which(loc_H.6$Fis<0.5 & loc_H.6>-0.5),]
-locnames<-rownames(loc_H.6_Fis.5)
+loc_H.6 <- stats$perloc[which(stats$perloc$Ho<0.6),]
+loc_H.6_Fis.5 <- loc_H.6[which(loc_H.6$Fis<0.5 & loc_H.6$Fis>-0.5),]
+locnames <-rownames(loc_H.6_Fis.5)
 print(paste("# SNPs to keep =", length(locnames)))
 
 # extract loci to remove from the dataset

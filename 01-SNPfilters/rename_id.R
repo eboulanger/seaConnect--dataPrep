@@ -6,23 +6,10 @@ id <- read.table(paste0("id_",args,".txt"), stringsAsFactors=F)
 
 # correct names
 
-if(args[1] == "mul") {
-  
-# mullus
-cell <- gsub("_.*","", id$V1)
-cell <- paste0("C", cell)
-ind <- gsub(".*_","", id$V1)
-ind <- gsub("E.*", "", ind)
-newid <- paste0(cell,"i", ind) 
-
-} else {
-  
-# dip
 cell <- gsub("_.*","", id$V1)
 ind <- gsub(".*i","", id$V1)
 ind <- gsub("E.*", "", ind)
 newid <- paste0(cell, "i", ind) 
-}
 
 # check
 bothid <- cbind(id, newid)
